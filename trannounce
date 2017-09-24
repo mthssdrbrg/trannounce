@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+import click
+import transmissionrpc
+import time
+import random
+
+
+@click.command()
+@click.option('--username', '-u', help='Transmission username')
+@click.option('--password', '-p', help='Transmission password')
+@click.option('--address', '-a',
+              default='http://localhost:9091/transmission/rpc',
+              help='URI of the Transmission RPC endpoint')
+@click.option('--timeout', '-t',
+              default=5, help='Timeout for Transmission requests')
+@click.option('--min-sleep', '-m',
+              default=10, help='Minimum time to sleep between announces')
+@click.option('--max-sleep', '-M',
+              default=30, help='Maximum time to sleep between announces')
+@click.option('--quiet', '-q',
+              default=30, help='Don\'t output anything')
+def main(address, username, password, timeout, min_sleep, max_sleep):
+    client = transmissionrpc.Client(address=address,
+                                    user=username,
+                                    password=password,
+                                    timeout=int(timeout))
+    torrents = [t for t in client.get_torrents() if t.status != 'stopped']
+    to_announce = []
+    for t in torrents:
+        stats = getattr(t, 'trackerStats')
+        for s in stats:
+            if not s['lastAnnounceSucceeded']:
+                to_announce.append(t)
+    click.echo(f'{len(to_announce)} torrents to reannounce')
+    for t in to_announce:
+        delay = random.randint(min_sleep, max_sleep)
+        click.echo(f'Reannouncing "{t.name}" ({t.id}), then sleeping {delay}s')
+        client.reannounce_torrent(t.id)
+        time.sleep(delay)
+
+
+if __name__ == '__main__':
+    main()
