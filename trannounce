@@ -44,7 +44,7 @@ def main(address, username, password, timeout, min_sleep, max_sleep,
     for t in to_announce:
         delay = random.randint(min_sleep, max_sleep)
         if not quiet:
-            click.echo(f'Reannouncing "{t.name}" ({t.id}),' +
+            click.echo(f'Reannouncing "{t.name}" ({t.id}), ' +
                        f'then sleeping {delay}s')
         client.reannounce_torrent(t.id)
         time.sleep(delay)
