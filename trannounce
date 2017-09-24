@@ -18,9 +18,8 @@ import random
               default=10, help='Minimum time to sleep between announces')
 @click.option('--max-sleep', '-M',
               default=30, help='Maximum time to sleep between announces')
-@click.option('--quiet', '-q',
-              default=30, help='Don\'t output anything')
-def main(address, username, password, timeout, min_sleep, max_sleep):
+@click.option('--quiet', '-q', is_flag=True, help='Don\'t output anything')
+def main(address, username, password, timeout, min_sleep, max_sleep, quiet):
     client = transmissionrpc.Client(address=address,
                                     user=username,
                                     password=password,
@@ -32,10 +31,13 @@ def main(address, username, password, timeout, min_sleep, max_sleep):
         for s in stats:
             if not s['lastAnnounceSucceeded']:
                 to_announce.append(t)
-    click.echo(f'{len(to_announce)} torrents to reannounce')
+    if not quiet:
+        click.echo(f'{len(to_announce)} torrents to reannounce')
     for t in to_announce:
         delay = random.randint(min_sleep, max_sleep)
-        click.echo(f'Reannouncing "{t.name}" ({t.id}), then sleeping {delay}s')
+        if not quiet:
+            click.echo(f'Reannouncing "{t.name}" ({t.id}),' +
+                       'then sleeping {delay}s')
         client.reannounce_torrent(t.id)
         time.sleep(delay)
 
