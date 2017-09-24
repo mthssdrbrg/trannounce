@@ -23,13 +23,13 @@ VERSION = '1.0.0'
               default=30, help='Maximum time to sleep between announces')
 @click.option('--quiet', '-q', is_flag=True, help='Don\'t output anything')
 @click.option('--version', '-v', is_flag=True, help='Print version and exit')
-def main(address, user, password, timeout, min_sleep, max_sleep,
+def main(address, username, password, timeout, min_sleep, max_sleep,
          quiet, version):
     if version:
         click.echo(VERSION)
         sys.exit(0)
     client = transmissionrpc.Client(address=address,
-                                    user=user,
+                                    user=username,
                                     password=password,
                                     timeout=int(timeout))
     torrents = [t for t in client.get_torrents() if t.status != 'stopped']
