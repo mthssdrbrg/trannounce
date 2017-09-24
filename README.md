@@ -1,5 +1,8 @@
 # trannounce
 
+[![Build Status](https://travis-ci.org/mthssdrbrg/trannounce.svg?branch=master)](https://travis-ci.org/mthssdrbrg/trannounce)
+[![GitHub Release](https://img.shields.io/github/release/mthssdrbrg/trannounce.svg)]()
+
 Simple script for automatically re-announcing torrents that failed the last announce, with a configurable delay between each announcement.
 
 ## Requirements
